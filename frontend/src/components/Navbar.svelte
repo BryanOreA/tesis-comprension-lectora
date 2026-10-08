@@ -1,13 +1,15 @@
 <script>
   import { user } from '../stores/user.js';
+  import { theme } from '../stores/theme.js';
+  import Icon from './Icon.svelte';
 
   function logout() {
     user.set(null);
   }
 
-  $: initials = $user?.name
-    ? $user.name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase()
-    : '??';
+  function toggleTheme() {
+    theme.toggle();
+  }
 
   $: roleLabel = {
     estudiante: 'Estudiante',
@@ -15,6 +17,13 @@
     padre: 'Padre de Familia',
     administrador: 'Administrador'
   }[$user?.role] || 'Usuario';
+
+  $: userIcon = {
+    estudiante: 'user-graduate',
+    docente: 'user-teacher',
+    padre: 'user',
+    administrador: 'user'
+  }[$user?.role] || 'user';
 </script>
 
 <header class="app-header">
@@ -32,26 +41,159 @@
     </div>
   </div>
 
-  <div class="user-info">
-    <div class="avatar">{initials}</div>
-    <div class="user-details">
-      <div class="user-name">{$user?.name || 'Usuario'}</div>
-      <div class="user-role">{roleLabel}</div>
+  <div class="navbar-actions">
+    <button class="btn-theme" onclick={toggleTheme} aria-label="Cambiar tema">
+      {#if $theme === 'dark'}
+        <Icon name="sun" size={18} />
+      {:else}
+        <Icon name="moon" size={18} />
+      {/if}
+    </button>
+
+    <div class="user-info">
+      <div class="avatar">
+        <Icon name={userIcon} size={22} strokeWidth={1.8} />
+      </div>
+      <div class="user-details">
+        <div class="user-name">{$user?.name || 'Usuario'}</div>
+        <div class="user-role">{roleLabel}</div>
+      </div>
     </div>
+
     <button class="btn-logout" onclick={logout}>Cerrar sesión</button>
   </div>
 </header>
 
 <style>
-  .brand { display: flex; align-items: center; gap: 14px; }
-  .brand-logo {
-    width: 44px; height: 44px; border-radius: 12px;
-    background: var(--primary-light); color: var(--primary);
-    display: flex; align-items: center; justify-content: center;
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
   }
-  .brand-logo svg { width: 24px; height: 24px; }
-  .brand-text { display: flex; flex-direction: column; line-height: 1.2; }
-  .brand-text strong { font-size: 15px; color: var(--text); font-weight: 700; }
-  .brand-text span { font-size: 12px; color: var(--text-secondary); }
-  .user-details { display: flex; flex-direction: column; line-height: 1.2; }
+
+  .brand-logo {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--primary-light);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .brand-logo svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+  }
+
+  .brand-text strong {
+    font-size: 15px;
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  .brand-text span {
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  .navbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .btn-theme {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+
+  .btn-theme:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    transform: rotate(15deg);
+  }
+
+  .avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(23, 107, 135, 0.25);
+  }
+
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .user-details {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+  }
+
+  .user-name {
+    font-size: 14px;
+    font-weight: 650;
+    color: var(--text);
+  }
+
+  .user-role {
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  .btn-logout {
+    padding: 9px 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .btn-logout:hover {
+    background: var(--error-bg);
+    color: var(--error);
+    border-color: var(--error);
+  }
+
+  @media (max-width: 768px) {
+    .user-details {
+      display: none;
+    }
+    .brand-text {
+      display: none;
+    }
+    .navbar-actions {
+      gap: 8px;
+    }
+  }
 </style>

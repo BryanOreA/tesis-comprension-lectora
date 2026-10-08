@@ -20,6 +20,7 @@ export async function queueEvent(event) {
     timestamp: new Date().toISOString(),
     synced: false
   });
+  console.log('📥 Evento en cola offline:', event.type);
 }
 
 export async function syncPendingEvents() {
@@ -27,19 +28,38 @@ export async function syncPendingEvents() {
   const events = await db.getAll(STORE_NAME);
   const pending = events.filter(e => !e.synced);
 
+  if (pending.length === 0) return;
+
+  console.log(`🔄 Sincronizando ${pending.length} eventos pendientes...`);
+
+  const token = localStorage.getItem('token');
   for (const event of pending) {
     try {
-      await fetch('http://localhost:8000/api/sync', {
+      const response = await fetch('/api/sync/', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
         body: JSON.stringify(event)
       });
-      event.synced = true;
-      await db.put(STORE_NAME, event);
+      if (response.ok) {
+        event.synced = true;
+        await db.put(STORE_NAME, event);
+      }
     } catch (error) {
-      console.warn('Sin conexión, evento en cola:', event.id);
+      console.warn('Sin conexión, evento sigue en cola:', event.id);
     }
   }
 }
 
-window.addEventListener('online', syncPendingEvents);
+// Detectar cuando vuelve la conexión
+window.addEventListener('online', () => {
+  console.log('✅ Conexión restaurada, sincronizando...');
+  syncPendingEvents();
+});
+
+// Intentar sincronizar al cargar si hay conexión
+if (navigator.onLine) {
+  syncPendingEvents();
+}

@@ -40,6 +40,41 @@
   --shadow-lg: 0 10px 30px rgba(24,59,78,0.10);
 }
 
+/* Tema Oscuro */
+[data-theme="dark"] {
+  --primary: #4A9DB5;
+  --primary-dark: #3A7D92;
+  --primary-light: #1F3844;
+
+  --secondary: #4EC3B0;
+  --secondary-light: #1A3B38;
+
+  --accent: #F4C95D;
+  --accent-light: #3D3420;
+
+  --background: #0F1A1F;
+  --surface: #1A2A32;
+
+  --text: #E5EDF1;
+  --text-secondary: #A5B5BE;
+  --text-muted: #6E8090;
+
+  --border: #2A3D47;
+
+  --success: #4ADE80;
+  --success-bg: #1B3A2A;
+
+  --warning: #FBBF24;
+  --warning-bg: #3D2E15;
+
+  --error: #F87171;
+  --error-bg: #3D1E1E;
+
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+  --shadow: 0 4px 16px rgba(0,0,0,0.4);
+  --shadow-lg: 0 10px 30px rgba(0,0,0,0.5);
+}
+
 * { box-sizing: border-box; }
 
 body {
@@ -48,6 +83,7 @@ body {
   color: var(--text);
   background: var(--background);
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* ============================================
@@ -67,6 +103,7 @@ body {
   background: var(--surface);
   border-bottom: 1px solid var(--border);
   box-shadow: var(--shadow-sm);
+  transition: background-color 0.3s ease;
 }
 
 .app-header .user-info {
@@ -115,7 +152,7 @@ body {
 .btn-logout:hover {
   background: var(--error-bg);
   color: var(--error);
-  border-color: #F2C8C6;
+  border-color: var(--error);
 }
 
 .card {
@@ -124,6 +161,7 @@ body {
   padding: 24px;
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--border);
+  transition: background-color 0.3s ease;
 }
 
 .badge {

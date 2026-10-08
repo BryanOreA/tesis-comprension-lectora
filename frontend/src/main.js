@@ -1,9 +1,10 @@
 import { mount } from 'svelte';
 import App from './App.svelte';
 import './app.css';
+import { theme } from './stores/theme.js';
 
-const app = mount(App, {
-  target: document.getElementById('app')
-});
+// Aplicar el tema guardado antes de montar la app
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.documentElement.setAttribute('data-theme', savedTheme);
 
-export default app;
+mount(App, { target: document.getElementById('app') });
